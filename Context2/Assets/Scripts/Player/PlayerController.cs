@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Collections;
+using Unity.Netcode;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
 	[SerializeField]
 	bool newInputSystem = false;
@@ -55,7 +57,40 @@ public class PlayerController : MonoBehaviour
 
 	Vector2 playerInput;
 
-	void OnValidate()
+
+	private NetworkVariable<MyCustomData> randomNumber = new NetworkVariable<MyCustomData>(
+		new MyCustomData
+		{
+			_int = 56,
+			_bool = true,
+		}, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+
+	public struct MyCustomData : INetworkSerializable
+    {
+		public int _int;
+		public bool _bool;
+		public FixedString512Bytes message;
+
+		public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+			serializer.SerializeValue(ref _int);
+			serializer.SerializeValue(ref _bool);
+			serializer.SerializeValue(ref message);
+        }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+		randomNumber.OnValueChanged += (MyCustomData previousValue, MyCustomData newValue) =>
+		{
+			Debug.Log(OwnerClientId + "Random Number" + newValue._int + "; " + newValue._bool + ";" + newValue.message);
+		};
+    }
+
+
+
+    void OnValidate()
 	{
 		minGroundDotProduct = Mathf.Cos(maxGroundAngle * Mathf.Deg2Rad);
 		minStairsDotProduct = Mathf.Cos(maxStairsAngle * Mathf.Deg2Rad);
@@ -75,6 +110,16 @@ public class PlayerController : MonoBehaviour
 
 	void Update()
 	{
+		if (!IsOwner) return;
+		if (Input.GetKeyDown(KeyCode.T))
+        {
+			randomNumber.Value = new MyCustomData
+			{
+				_int = 10,
+				_bool = false,
+				message = "Testing if this works"
+			};
+        }
         if (newInputSystem == false)
         {
 			playerInput.x = Input.GetAxis("Horizontal");
