@@ -6,11 +6,13 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
+    
     [SerializeField] private Button hostButton;
     [SerializeField] private Button clientButton;
 
     private void Awake()
     {
+        
         hostButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
@@ -19,7 +21,7 @@ public class MenuManager : MonoBehaviour
         {
             NetworkManager.Singleton.StartClient();
         });
-
+        
     }
     public void QuitGame()
     {
