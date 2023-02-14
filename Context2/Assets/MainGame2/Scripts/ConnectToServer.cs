@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
+using TMPro;
+using UnityEngine.UI;
 
 public class ConnectToServer : MonoBehaviourPunCallbacks
 {
-    private void Start()
+    public TMP_InputField usernameInput;
+    public TMP_Text buttonText;
+
+    public void OnClickConnect()
     {
-        PhotonNetwork.ConnectUsingSettings();
+        if(usernameInput.text.Length >= 1)
+        {
+            PhotonNetwork.NickName = usernameInput.text;
+            buttonText.text = "Connecting...";
+            PhotonNetwork.ConnectUsingSettings();
+
+        }
     }
 
     public override void OnConnectedToMaster()
     {
-        SceneManager.LoadScene("Main Menu");
+        SceneManager.LoadScene("Lobby");
     }
 }

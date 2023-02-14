@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/MainGame2/Scenes/LoadingScene.unity
     guid: 4d79aa5ae5504e84484e71f7c2b4676f
   - enabled: 1
-    path: Assets/MainGame2/Scenes/Main Menu.unity
+    path: Assets/MainGame2/Scenes/Lobby.unity
     guid: 157ee17281fceb04388fc2e67b1fb681
   - enabled: 1
     path: Assets/MainGame2/Scenes/Game.unity
