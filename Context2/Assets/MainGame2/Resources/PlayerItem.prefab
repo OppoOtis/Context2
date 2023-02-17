@@ -224,6 +224,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: {fileID: 3130078947623895258}
+  playerAvatar: {fileID: 3130078948812941116}
+  avatars:
+  - {fileID: 21300000, guid: 7ea3e4760b226d34981fe8e740663e00, type: 3}
+  - {fileID: 21300000, guid: 713b70c5de9824d45aef254e6dd99734, type: 3}
+  - {fileID: 21300000, guid: b4c3e9d150e35ae44b0b606b50244408, type: 3}
+  - {fileID: 21300000, guid: 81bc94efe8467bc488d2d849b39e8dc1, type: 3}
+  - {fileID: 21300000, guid: 411e1c9d323198d48b845e586b0ec1d3, type: 3}
+  - {fileID: 21300000, guid: e296966e21b1db94e882dc08be9b667a, type: 3}
+  - {fileID: 21300000, guid: dd2162a555b94ee4c8be16ccfeee1921, type: 3}
+  - {fileID: 21300000, guid: d9f7ddecdcfd79d429aa453057410caf, type: 3}
+  - {fileID: 21300000, guid: 368b0b0ae20d7de4e8a7d41064bbbc06, type: 3}
+  - {fileID: 21300000, guid: 43d4bd7cbde1cdc4e8526d24b6688250, type: 3}
+  - {fileID: 21300000, guid: fac63bd797eeea44d8d8bf65e2a54611, type: 3}
+  - {fileID: 21300000, guid: 00adc0f17c3ddf64bb8cea9d4056bd5e, type: 3}
+  - {fileID: 21300000, guid: eb30f63b4b7299e41af74442924f80be, type: 3}
+  - {fileID: 21300000, guid: 1502f5e6b74d8aa489362e34386e9d10, type: 3}
+  - {fileID: 21300000, guid: c1efb89aec626714b9a7da921052007b, type: 3}
+  - {fileID: 21300000, guid: 6dfaff3e49af4304f930ce16809079ee, type: 3}
+  - {fileID: 21300000, guid: 7380ffea8a351924aac29823add855a9, type: 3}
+  - {fileID: 21300000, guid: 95e8f552f9bfbde41b42f1158d160dde, type: 3}
 --- !u!1 &3130078948812941106
 GameObject:
   m_ObjectHideFlags: 0
