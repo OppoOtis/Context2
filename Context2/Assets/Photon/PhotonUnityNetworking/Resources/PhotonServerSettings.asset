@@ -40,6 +40,11 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - SendString
+  - SendRound1Scenario
+  - SendRound1Outcome
+  - SendRound1Outcomes
+  - OnNextSection
+  - SendRound1Scenarios
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
