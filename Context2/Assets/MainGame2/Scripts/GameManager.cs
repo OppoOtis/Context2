@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
 
     public TMP_InputField round1Scenario, round1PositiveOutcome, round1NegativeOutcome;
-    public TMP_Text round1ScenarioText;
+    public TMP_Text round1ScenarioText, round1ScenarioTextShown, round1PositiveOutcomeText, round1NegativeOutcomeText;
     public Slider round1PlayerChoicesSlider;
     public Slider round1PlayerVoteSlider;
     public GameObject nextSectionButton;
@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public int[] round1PlayerVotes;
     public int roundSection = 0;
     public bool nextRound;
+    public int currentPlayerShown = 0;
+    public bool allOutcomesDone = false;
 
     private void Awake()
     {
@@ -45,6 +47,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         round1PositiveOutcomes = new string[playerCount];
         round1NegativeOutcomes = new string[playerCount];
         round1PlayerChoices = new int[playerCount];
+        round1PlayerVotes = new int[playerCount];
     }
     private void Start()
     {
@@ -62,6 +65,21 @@ public class GameManager : MonoBehaviourPunCallbacks
     void OnNextSection()
     {
         roundSection++;
+        if (roundSection == 4)
+        {
+            if (!allOutcomesDone)
+            {
+                roundSection = 2;
+                foreach (GameObject obj in roundOBJ[3].objects)
+                {
+                    obj.SetActive(false);
+                }
+            }
+            else
+            {
+                photonView.RPC("RestartRound", RpcTarget.All);
+            }
+        }
         foreach (GameObject obj in roundOBJ[roundSection].objects)
         {
             obj.SetActive(true);
@@ -96,8 +114,6 @@ public class GameManager : MonoBehaviourPunCallbacks
                     round1ScrambledScenarios.Add(savedCurrentPlayerScenario);
                 round1ScrambledScenarios.Remove(stringToReturn);
                 scenariosToReturnPerPlayer.Add(stringToReturn);
-
-
             }
             for (int playerNumber = 0; playerNumber < playerCount; playerNumber++)
             {
@@ -108,6 +124,25 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (roundSection == 2)
         {
             photonView.RPC("SendRound1PlayerChoices", RpcTarget.MasterClient, (int)round1PlayerChoicesSlider.value, playerID);
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                return;
+            }
+            photonView.RPC("TriggerScenarioPlayerShown", RpcTarget.All, (int)currentPlayerShown);
+
+        }
+        if (roundSection == 3)
+        {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                return;
+            }
+            photonView.RPC("TriggerOutcomePlayerShown", RpcTarget.All, (int)currentPlayerShown);
+            currentPlayerShown++;
+            if (currentPlayerShown == playerCount)
+            {
+                allOutcomesDone = true;
+            }
         }
 
     }
@@ -122,25 +157,31 @@ public class GameManager : MonoBehaviourPunCallbacks
         string positiveOutcome = round1PositiveOutcome.text;
         string negativeOutcome = round1NegativeOutcome.text;
         int playerChoice = 0;
-        photonView.RPC("SendRound1Outcomes", RpcTarget.MasterClient, positiveOutcome, negativeOutcome, playerChoice, playerID);
+        photonView.RPC("SendRound1Outcomes", RpcTarget.All, positiveOutcome, negativeOutcome, playerChoice, playerID);
+    }
+
+    public void PlaceVote()
+    {
+        photonView.RPC("SendRound1PlayerVote", RpcTarget.All, (int)round1PlayerVoteSlider.value, playerID);
     }
 
     [PunRPC]
     void SendRound1Scenarios(string input, int pID)
     {
         string recievedString = input;
-        int recievedID = pID-1;
+        int recievedID = pID - 1;
         round1Scenarios[recievedID] = input;
     }
-    //hoi joppe
+
     [PunRPC]
     void SendRound1Scenario(string input, int pID)
     {
-        if(playerID == pID)
+        string recievedString = input;
+        if (playerID == pID)
         {
-            string recievedString = input;
             round1ScenarioText.text = recievedString;
         }
+        round1Scenarios[pID - 1] = recievedString;
     }
 
     [PunRPC]
@@ -161,8 +202,38 @@ public class GameManager : MonoBehaviourPunCallbacks
     void SendRound1PlayerChoices(int value, int pID)
     {
         int recievedValue = value;
-        int recievedID = pID-1;
+        int recievedID = pID - 1;
         round1PlayerChoices[recievedID] = recievedValue;
+    }
+
+    [PunRPC]
+    void TriggerScenarioPlayerShown(int value)
+    {
+        int recievedValue = value;
+        round1ScenarioTextShown.text = round1Scenarios[value];
+    }
+
+    [PunRPC]
+    void TriggerOutcomePlayerShown(int value)
+    {
+        int recievedValue = value;
+        round1PositiveOutcomeText.text = round1PositiveOutcomes[value];
+        round1NegativeOutcomeText.text = round1NegativeOutcomes[value];
+    }
+
+    [PunRPC]
+    void SendRound1PlayerVote(int value, int pID)
+    {
+        int recievedValue = value;
+        int recievedID = pID - 1;
+        round1PlayerVotes[recievedID] = recievedValue;
+    }
+
+    [PunRPC]
+    void RestartRound()
+    {
+        roundSection = 0;
+        PhotonNetwork.LoadLevel("Game");
     }
     //===============================================================================================================================
 

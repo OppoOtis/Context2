@@ -46,6 +46,12 @@ MonoBehaviour:
   - OnNextSection
   - SendRound1Scenarios
   - SendRound1PlayerChoices
+  - TriggerPlayerShown
+  - TriggerScenarioPlayerShown
+  - TriggerOutcomePlayerShown
+  - SendRound1PlayerVote
+  - Restart
+  - RestartRound
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
