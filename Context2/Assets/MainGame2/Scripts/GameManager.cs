@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
         photonView = PhotonView.Get(this);
         playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
         round1Scenarios = new string[playerCount];
@@ -75,12 +75,12 @@ public class GameManager : MonoBehaviourPunCallbacks
                     obj.SetActive(false);
                 }
             }
-            else
-            {
-                photonView.RPC("RestartRound", RpcTarget.All);
-            }
         }
-        foreach (GameObject obj in roundOBJ[roundSection].objects)
+        if (roundSection == 5)
+        {
+            photonView.RPC("RestartRound", RpcTarget.All);
+        }
+            foreach (GameObject obj in roundOBJ[roundSection].objects)
         {
             obj.SetActive(true);
         }
