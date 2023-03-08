@@ -135,7 +135,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         if (roundSection == 2)
         {
-            photonView.RPC("SendRound1PlayerChoices", RpcTarget.MasterClient, (int)round1PlayerChoicesSlider.value, playerID);
             if (!PhotonNetwork.IsMasterClient)
             {
                 return;
@@ -171,10 +170,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         int playerChoice = 0;
         photonView.RPC("SendRound1Outcomes", RpcTarget.All, positiveOutcome, negativeOutcome, playerChoice, playerID);
     }
-
-    public void PlaceVote()
+    public void PlaceChoice(int value)
     {
-        photonView.RPC("SendRound1PlayerVote", RpcTarget.All, (int)round1PlayerVoteSlider.value, playerID);
+        photonView.RPC("SendRound1PlayerChoices", RpcTarget.MasterClient, value, playerID);
+    }
+
+    public void PlaceVote(int value)
+    {
+        photonView.RPC("SendRound1PlayerVote", RpcTarget.All, value, playerID);
     }
 
     [PunRPC]
