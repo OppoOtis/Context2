@@ -199,24 +199,16 @@ MonoBehaviour:
   playerName: {fileID: 3130078947623895258}
   playerAvatar: {fileID: 3130078948812941116}
   avatars:
-  - {fileID: 21300000, guid: 7ea3e4760b226d34981fe8e740663e00, type: 3}
-  - {fileID: 21300000, guid: 713b70c5de9824d45aef254e6dd99734, type: 3}
-  - {fileID: 21300000, guid: b4c3e9d150e35ae44b0b606b50244408, type: 3}
-  - {fileID: 21300000, guid: 81bc94efe8467bc488d2d849b39e8dc1, type: 3}
-  - {fileID: 21300000, guid: 411e1c9d323198d48b845e586b0ec1d3, type: 3}
-  - {fileID: 21300000, guid: e296966e21b1db94e882dc08be9b667a, type: 3}
-  - {fileID: 21300000, guid: dd2162a555b94ee4c8be16ccfeee1921, type: 3}
-  - {fileID: 21300000, guid: d9f7ddecdcfd79d429aa453057410caf, type: 3}
-  - {fileID: 21300000, guid: 368b0b0ae20d7de4e8a7d41064bbbc06, type: 3}
-  - {fileID: 21300000, guid: 43d4bd7cbde1cdc4e8526d24b6688250, type: 3}
-  - {fileID: 21300000, guid: fac63bd797eeea44d8d8bf65e2a54611, type: 3}
-  - {fileID: 21300000, guid: 00adc0f17c3ddf64bb8cea9d4056bd5e, type: 3}
-  - {fileID: 21300000, guid: eb30f63b4b7299e41af74442924f80be, type: 3}
-  - {fileID: 21300000, guid: 1502f5e6b74d8aa489362e34386e9d10, type: 3}
-  - {fileID: 21300000, guid: c1efb89aec626714b9a7da921052007b, type: 3}
-  - {fileID: 21300000, guid: 6dfaff3e49af4304f930ce16809079ee, type: 3}
-  - {fileID: 21300000, guid: 7380ffea8a351924aac29823add855a9, type: 3}
-  - {fileID: 21300000, guid: 95e8f552f9bfbde41b42f1158d160dde, type: 3}
+  - {fileID: 2100000, guid: c3c22b3559c7a7048a8f06af9f00d3b5, type: 2}
+  - {fileID: 2100000, guid: 4a48ca70194414f4f99cc822cbe36f21, type: 2}
+  - {fileID: 2100000, guid: 5d3241ce176d99046a4d3b2c0bd54cce, type: 2}
+  - {fileID: 2100000, guid: 60ea06defe01ca640b4f7192c9efe522, type: 2}
+  - {fileID: 2100000, guid: dc33fd175c74dbf44a90121b76b91b49, type: 2}
+  - {fileID: 2100000, guid: 7cda87cd8968ebb449b92da98f415bbd, type: 2}
+  - {fileID: 2100000, guid: 77f2f92c64cecc04aa1b64680e4186d7, type: 2}
+  - {fileID: 2100000, guid: 98a21ff7c09bf8048a135446c312dec8, type: 2}
+  - {fileID: 2100000, guid: 9329d8bee08008347a3b96d7868f2b9c, type: 2}
+  - {fileID: 2100000, guid: daaed323cc8b623488bf48be092e92e4, type: 2}
 --- !u!114 &4274482257159088376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -283,7 +275,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -27.309}
-  m_SizeDelta: {x: 200, y: 235.3853}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3130078948812941117
 CanvasRenderer:
@@ -305,7 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 4a48ca70194414f4f99cc822cbe36f21, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
