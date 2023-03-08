@@ -22,7 +22,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
     public List<PlayerItem> playerItemsList = new List<PlayerItem>();
     public PlayerItem playerItemPrefab;
-    public Transform playerItemParent;
+    public Transform[] playerItemParent;
 
     public GameObject playButton;
 
@@ -108,7 +108,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         
         foreach(KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
         {
-            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParent);
+            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerItemParent[player.Value.ActorNumber-1]);
             newPlayerItem.SetPlayerInfo(player.Value);
             playerItemsList.Add(newPlayerItem);
         }
