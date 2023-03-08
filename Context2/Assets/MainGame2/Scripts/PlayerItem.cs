@@ -12,7 +12,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
     public Image playerAvatar;
-    public Sprite[] avatars;
+    public Material[] avatars;
 
     Player player;
     public void SetPlayerInfo(Player _player)
@@ -40,7 +40,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     {
         if (player.CustomProperties.ContainsKey("playerAvatar"))
         {
-            playerAvatar.sprite = avatars[(int)player.CustomProperties["playerAvatar"]];
+            playerAvatar.material = avatars[(int)player.CustomProperties["playerAvatar"]];
             playerProperties["playerAvatar"] = (int)player.CustomProperties["playerAvatar"];
 
         }
@@ -52,7 +52,7 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     public void SetPlayerItem(Player player)
     {
-        playerAvatar.sprite = avatars[(int)player.CustomProperties["playerAvatar"]];
+        playerAvatar.material = avatars[(int)player.CustomProperties["playerAvatar"]];
         playerName.text = player.NickName;
     }
 }
