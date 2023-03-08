@@ -27,6 +27,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         public GameObject[] objects;
     }
 
+    public GameObject playerItem;
+    public PlayerItem playerItemPrefab;
+    public Transform playerParent;
+    public List<GameObject> playerItemsList;
+
     public string[] round1Scenarios, round1PositiveOutcomes, round1NegativeOutcomes;
     public List<string> round1ScrambledScenarios;
     List<string> scenariosToReturnPerPlayer;
@@ -40,6 +45,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void Awake()
     {
         //DontDestroyOnLoad(this.gameObject);
+        playerItemsList = new List<GameObject>();
         photonView = PhotonView.Get(this);
         playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
         round1Scenarios = new string[playerCount];
@@ -55,6 +61,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             nextSectionButton.SetActive(true);
+        }
+        foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
+        {
+            PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerParent);
+            newPlayerItem.SetPlayerItem(player.Value);
+            playerItemsList.Add(newPlayerItem.gameObject);
         }
     }
     public void OnClickNextSection()

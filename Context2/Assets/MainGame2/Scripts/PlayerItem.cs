@@ -49,4 +49,10 @@ public class PlayerItem : MonoBehaviourPunCallbacks
             playerProperties["playerAvatar"] = Random.Range(0, avatars.Length);
         }
     }
+
+    public void SetPlayerItem(Player player)
+    {
+        playerAvatar.sprite = avatars[(int)player.CustomProperties["playerAvatar"]];
+        playerName.text = player.NickName;
+    }
 }

@@ -1898,6 +1898,10 @@ MonoBehaviour:
     - {fileID: 1611298584}
   - objects:
     - {fileID: 142322634}
+  playerItem: {fileID: 3130078948752720101, guid: 499a91876fbc6f848a0077516826bcb3, type: 3}
+  playerItemPrefab: {fileID: -4104569110452099180, guid: 499a91876fbc6f848a0077516826bcb3, type: 3}
+  playerParent: {fileID: 1715040106}
+  playerItemsList: []
   round1Scenarios: []
   round1PositiveOutcomes: []
   round1NegativeOutcomes: []
@@ -2792,7 +2796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1285005613
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2994,7 +2998,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1399850572
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3822,6 +3826,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   toggle1: {fileID: 0}
   toggle2: {fileID: 0}
+--- !u!1 &1715040105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1715040106}
+  m_Layer: 5
+  m_Name: Players
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1715040106
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1715040105}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1781306684}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1740794360
 GameObject:
   m_ObjectHideFlags: 0
@@ -4159,6 +4199,7 @@ RectTransform:
   - {fileID: 142322635}
   - {fileID: 1285005613}
   - {fileID: 554763116}
+  - {fileID: 1715040106}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
