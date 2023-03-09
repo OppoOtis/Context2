@@ -12,6 +12,8 @@ public class PlayerItem : MonoBehaviourPunCallbacks
 
     ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
     public Image playerAvatar;
+    public TMP_Text playerScoreText;
+    public int playerScore = 0;
     public Material[] avatars;
 
     Player player;
@@ -54,5 +56,16 @@ public class PlayerItem : MonoBehaviourPunCallbacks
     {
         playerAvatar.material = avatars[(int)player.CustomProperties["playerAvatar"]];
         playerName.text = player.NickName;
+    }
+
+    public void ShowScore()
+    {
+        playerScoreText.text = playerScore.ToString();
+        playerScoreText.gameObject.SetActive(true);
+    }
+
+    public void HideScore()
+    {
+        playerScoreText.gameObject.SetActive(false);
     }
 }
