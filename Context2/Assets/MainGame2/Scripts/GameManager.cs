@@ -15,9 +15,18 @@ public class GameManager : MonoBehaviourPunCallbacks
     public Slider round1PlayerChoicesSlider;
     public Slider round1PlayerVoteSlider;
     public GameObject nextSectionButton;
+    public int[] roundTimers;
+    public float timer;
+    public bool timerIsRunning;
+    public TMP_Text timerText;
     PhotonView photonView;
     int playerID;
     int playerCount;
+
+    public Transform resetPosition;
+    public Transform playerReviewPosition;
+    public Transform[] playerPositiveChoices;
+    public Transform[] playerNegativeChoices;
 
     [SerializeField]
     private RoundObjects[] roundOBJ;
@@ -31,6 +40,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public PlayerItem playerItemPrefab;
     public Transform playerParent;
     public List<GameObject> playerItemsList;
+    public List<GameObject> redonePlayerItemsList;
     public GameObject[] playerScorePositions;
 
     public string[] round1Scenarios, round1PositiveOutcomes, round1NegativeOutcomes;
@@ -47,6 +57,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         //DontDestroyOnLoad(this.gameObject);
         playerItemsList = new List<GameObject>();
+        redonePlayerItemsList = new List<GameObject>();
         photonView = PhotonView.Get(this);
         playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
         round1Scenarios = new string[playerCount];
@@ -55,6 +66,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         round1NegativeOutcomes = new string[playerCount];
         round1PlayerChoices = new int[playerCount];
         round1PlayerVotes = new int[playerCount];
+        timerIsRunning = true;
+        timer = 90;
     }
     private void Start()
     {
@@ -62,14 +75,22 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             nextSectionButton.SetActive(true);
+            
         }
         foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
         {
             PlayerItem newPlayerItem = Instantiate(playerItemPrefab, playerParent);
             newPlayerItem.SetPlayerItem(player.Value);
             playerItemsList.Add(newPlayerItem.gameObject);
-            newPlayerItem.gameObject.SetActive(false);
         }
+        if (PhotonNetwork.IsMasterClient)
+        {
+            foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
+            {
+                photonView.RPC("SendPlayerItemsList", RpcTarget.All, player.Key, player.Value.NickName);
+            }
+        }
+        Debug.Log(PhotonNetwork.CurrentRoom.Players);
     }
     public void OnClickNextSection()
     {
@@ -93,9 +114,8 @@ public class GameManager : MonoBehaviourPunCallbacks
             {
                 for(int i = 0; i < playerCount; i++)
                 {
-                    playerItemsList[i].transform.position = playerScorePositions[i].transform.position;
-                    playerItemsList[i].SetActive(true);
-                    playerItemsList[i].GetComponent<PlayerItem>().ShowScore();
+                    redonePlayerItemsList[i].transform.position = playerScorePositions[i].transform.position;
+                    redonePlayerItemsList[i].GetComponent<PlayerItem>().ShowScore();
                 }
             }
 
@@ -104,11 +124,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             for (int i = 0; i < playerCount; i++)
             {
-                playerItemsList[i].GetComponent<PlayerItem>().HideScore();
-                playerItemsList[i].SetActive(false);
+                redonePlayerItemsList[i].GetComponent<PlayerItem>().HideScore();
             }
             photonView.RPC("RestartRound", RpcTarget.All);
+            return;
         }
+        timer = roundTimers[roundSection];
+        timerIsRunning = true;
         foreach (GameObject obj in roundOBJ[roundSection].objects)
         {
             obj.SetActive(true);
@@ -172,6 +194,34 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
         }
     }
+
+    private void Update()
+    {
+        if (timerIsRunning)
+        {
+            if (timer > 0)
+            {
+                timer -= Time.deltaTime;
+            }
+            else
+            {
+                timer = 0;
+                timerIsRunning = false;
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    OnClickNextSection();
+                }
+            }
+        }
+        DisplayTime(timer);
+    }
+
+    void DisplayTime(float timeToDisplay)
+    {
+        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
+        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+        timerText.text = string.Format("{0:0}:{1:00}", minutes, seconds);
+    }
     //===============================================================================================================================
     public void Round1Scenarios()
     {
@@ -192,6 +242,18 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void PlaceVote(int value)
     {
         photonView.RPC("SendRound1PlayerVote", RpcTarget.All, value, playerID);
+    }
+
+    [PunRPC]
+    void SendPlayerItemsList(int value, string name)
+    {
+        foreach(GameObject player in playerItemsList)
+        {
+            if(player.GetComponent<PlayerItem>().playerName.text == name)
+            {
+                redonePlayerItemsList.Add(player);
+            }
+        }
     }
 
     [PunRPC]
@@ -238,8 +300,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void TriggerScenarioPlayerShown(int value)
     {
+        foreach(GameObject player in redonePlayerItemsList)
+        {
+            player.transform.position = resetPosition.position;
+        }
         int recievedValue = value;
         round1ScenarioTextShown.text = round1Scenarios[value];
+        redonePlayerItemsList[value].transform.position = playerReviewPosition.position;
     }
 
     [PunRPC]
@@ -252,9 +319,24 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if(round1PlayerChoices[value] == round1PlayerVotes[i])
             {
-                int score = playerItemsList[i].GetComponent<PlayerItem>().playerScore;
+                int score = redonePlayerItemsList[i].GetComponent<PlayerItem>().playerScore;
                 score++;
-                playerItemsList[i].GetComponent<PlayerItem>().playerScore = score;
+                redonePlayerItemsList[i].GetComponent<PlayerItem>().playerScore = score;
+            }
+            if(round1PlayerChoices[value] == 0)
+            {
+                redonePlayerItemsList[i].transform.position = playerPositiveChoices[i].position;
+                if(i == value)
+                {
+                    redonePlayerItemsList[i].transform.position = playerPositiveChoices[8].position;
+                }
+            }else if(round1PlayerChoices[value] == 1)
+            {
+                redonePlayerItemsList[i].transform.position = playerNegativeChoices[i].position;
+                if (i == value)
+                {
+                    redonePlayerItemsList[i].transform.position = playerNegativeChoices[8].position;
+                }
             }
         }
     }
