@@ -3460,6 +3460,7 @@ MonoBehaviour:
   playerItemPrefab: {fileID: -4104569110452099180, guid: 499a91876fbc6f848a0077516826bcb3, type: 3}
   playerParent: {fileID: 1715040106}
   playerItemsList: []
+  redonePlayerItemsList: []
   playerScorePositions:
   - {fileID: 95785039}
   - {fileID: 1371719347}
