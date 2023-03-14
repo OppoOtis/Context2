@@ -15,9 +15,18 @@ public class GameManager : MonoBehaviourPunCallbacks
     public Slider round1PlayerChoicesSlider;
     public Slider round1PlayerVoteSlider;
     public GameObject nextSectionButton;
+    public int[] roundTimers;
+    public float timer;
+    public bool timerIsRunning;
+    public TMP_Text timerText;
     PhotonView photonView;
     int playerID;
     int playerCount;
+
+    public Transform resetPosition;
+    public Transform playerReviewPosition;
+    public Transform[] playerPositiveChoices;
+    public Transform[] playerNegativeChoices;
 
     [SerializeField]
     private RoundObjects[] roundOBJ;
@@ -31,6 +40,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public PlayerItem playerItemPrefab;
     public Transform playerParent;
     public List<GameObject> playerItemsList;
+    public List<GameObject> redonePlayerItemsList;
+    public GameObject[] playerScorePositions;
 
     public string[] round1Scenarios, round1PositiveOutcomes, round1NegativeOutcomes;
     public List<string> round1ScrambledScenarios;
@@ -46,6 +57,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         //DontDestroyOnLoad(this.gameObject);
         playerItemsList = new List<GameObject>();
+        redonePlayerItemsList = new List<GameObject>();
         photonView = PhotonView.Get(this);
         playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
         round1Scenarios = new string[playerCount];
@@ -54,6 +66,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         round1NegativeOutcomes = new string[playerCount];
         round1PlayerChoices = new int[playerCount];
         round1PlayerVotes = new int[playerCount];
+        timerIsRunning = true;
+        timer = 90;
     }
     private void Start()
     {
@@ -61,6 +75,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             nextSectionButton.SetActive(true);
+            
         }
         foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
         {
@@ -68,6 +83,14 @@ public class GameManager : MonoBehaviourPunCallbacks
             newPlayerItem.SetPlayerItem(player.Value);
             playerItemsList.Add(newPlayerItem.gameObject);
         }
+        if (PhotonNetwork.IsMasterClient)
+        {
+            foreach (KeyValuePair<int, Player> player in PhotonNetwork.CurrentRoom.Players)
+            {
+                photonView.RPC("SendPlayerItemsList", RpcTarget.All, player.Key, player.Value.NickName);
+            }
+        }
+        Debug.Log(PhotonNetwork.CurrentRoom.Players);
     }
     public void OnClickNextSection()
     {
@@ -87,12 +110,28 @@ public class GameManager : MonoBehaviourPunCallbacks
                     obj.SetActive(false);
                 }
             }
+            else
+            {
+                for(int i = 0; i < playerCount; i++)
+                {
+                    redonePlayerItemsList[i].transform.position = playerScorePositions[i].transform.position;
+                    redonePlayerItemsList[i].GetComponent<PlayerItem>().ShowScore();
+                }
+            }
+
         }
         if (roundSection == 5)
         {
+            for (int i = 0; i < playerCount; i++)
+            {
+                redonePlayerItemsList[i].GetComponent<PlayerItem>().HideScore();
+            }
             photonView.RPC("RestartRound", RpcTarget.All);
+            return;
         }
-            foreach (GameObject obj in roundOBJ[roundSection].objects)
+        timer = roundTimers[roundSection];
+        timerIsRunning = true;
+        foreach (GameObject obj in roundOBJ[roundSection].objects)
         {
             obj.SetActive(true);
         }
@@ -144,18 +183,44 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         if (roundSection == 3)
         {
-            if (!PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.IsMasterClient)
             {
-                return;
+                photonView.RPC("TriggerOutcomePlayerShown", RpcTarget.All, (int)currentPlayerShown);
             }
-            photonView.RPC("TriggerOutcomePlayerShown", RpcTarget.All, (int)currentPlayerShown);
             currentPlayerShown++;
             if (currentPlayerShown == playerCount)
             {
                 allOutcomesDone = true;
             }
         }
+    }
 
+    private void Update()
+    {
+        if (timerIsRunning)
+        {
+            if (timer > 0)
+            {
+                timer -= Time.deltaTime;
+            }
+            else
+            {
+                timer = 0;
+                timerIsRunning = false;
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    OnClickNextSection();
+                }
+            }
+        }
+        DisplayTime(timer);
+    }
+
+    void DisplayTime(float timeToDisplay)
+    {
+        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
+        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
+        timerText.text = string.Format("{0:0}:{1:00}", minutes, seconds);
     }
     //===============================================================================================================================
     public void Round1Scenarios()
@@ -167,17 +232,28 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         string positiveOutcome = round1PositiveOutcome.text;
         string negativeOutcome = round1NegativeOutcome.text;
-        int playerChoice = 0;
-        photonView.RPC("SendRound1Outcomes", RpcTarget.All, positiveOutcome, negativeOutcome, playerChoice, playerID);
+        photonView.RPC("SendRound1Outcomes", RpcTarget.All, positiveOutcome, negativeOutcome, playerID);
     }
     public void PlaceChoice(int value)
     {
-        photonView.RPC("SendRound1PlayerChoices", RpcTarget.MasterClient, value, playerID);
+        photonView.RPC("SendRound1PlayerChoices", RpcTarget.All, value, playerID);
     }
 
     public void PlaceVote(int value)
     {
         photonView.RPC("SendRound1PlayerVote", RpcTarget.All, value, playerID);
+    }
+
+    [PunRPC]
+    void SendPlayerItemsList(int value, string name)
+    {
+        foreach(GameObject player in playerItemsList)
+        {
+            if(player.GetComponent<PlayerItem>().playerName.text == name)
+            {
+                redonePlayerItemsList.Add(player);
+            }
+        }
     }
 
     [PunRPC]
@@ -200,17 +276,17 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void SendRound1Outcomes(string out1, string out2, int choice, int pID)
+    void SendRound1Outcomes(string out1, string out2, int pID)
     {
         string recievedString1 = out1;
         string recievedString2 = out2;
-        int recievedChoice = choice;
+        //int recievedChoice = choice;
         int recievedID = pID - 1;
 
 
         round1PositiveOutcomes[recievedID] = recievedString1;
         round1NegativeOutcomes[recievedID] = recievedString2;
-        round1PlayerChoices[recievedID] = recievedChoice;
+        //round1PlayerChoices[recievedID] = recievedChoice;
     }
 
     [PunRPC]
@@ -224,8 +300,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void TriggerScenarioPlayerShown(int value)
     {
+        foreach(GameObject player in redonePlayerItemsList)
+        {
+            player.transform.position = resetPosition.position;
+        }
         int recievedValue = value;
         round1ScenarioTextShown.text = round1Scenarios[value];
+        redonePlayerItemsList[value].transform.position = playerReviewPosition.position;
     }
 
     [PunRPC]
@@ -234,6 +315,30 @@ public class GameManager : MonoBehaviourPunCallbacks
         int recievedValue = value;
         round1PositiveOutcomeText.text = round1PositiveOutcomes[value];
         round1NegativeOutcomeText.text = round1NegativeOutcomes[value];
+        for(int i = 0; i < playerCount; i++)
+        {
+            if(round1PlayerChoices[value] == round1PlayerVotes[i])
+            {
+                int score = redonePlayerItemsList[i].GetComponent<PlayerItem>().playerScore;
+                score++;
+                redonePlayerItemsList[i].GetComponent<PlayerItem>().playerScore = score;
+            }
+            if(round1PlayerChoices[value] == 0)
+            {
+                redonePlayerItemsList[i].transform.position = playerPositiveChoices[i].position;
+                if(i == value)
+                {
+                    redonePlayerItemsList[i].transform.position = playerPositiveChoices[8].position;
+                }
+            }else if(round1PlayerChoices[value] == 1)
+            {
+                redonePlayerItemsList[i].transform.position = playerNegativeChoices[i].position;
+                if (i == value)
+                {
+                    redonePlayerItemsList[i].transform.position = playerNegativeChoices[8].position;
+                }
+            }
+        }
     }
 
     [PunRPC]
