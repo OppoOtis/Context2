@@ -43,6 +43,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     public List<GameObject> redonePlayerItemsList;
     public GameObject[] playerScorePositions;
 
+    public GameObject waitPlayerVote;
+    public GameObject waitForPlayers;
+    public GameObject[] selectedButtons;
+    public GameObject positivePanelHighlight;
+    public GameObject negativePanelHighlight;
+
     public string[] round1Scenarios, round1PositiveOutcomes, round1NegativeOutcomes;
     public List<string> round1ScrambledScenarios;
     List<string> scenariosToReturnPerPlayer;
@@ -52,6 +58,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public bool nextRound;
     public int currentPlayerShown = 0;
     public bool allOutcomesDone = false;
+
+    public int everyoneSubmitted = 0;
 
     private void Awake()
     {
@@ -66,6 +74,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         round1NegativeOutcomes = new string[playerCount];
         round1PlayerChoices = new int[playerCount];
         round1PlayerVotes = new int[playerCount];
+        for(int i = 0; i < playerCount; i++)
+        {
+            round1PlayerVotes[i] = -1;
+        }
         timerIsRunning = true;
         timer = 90;
     }
@@ -95,11 +107,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public void OnClickNextSection()
     {
         photonView.RPC("OnNextSection", RpcTarget.All);
+        everyoneSubmitted = 0;
     }
     [PunRPC]
     void OnNextSection()
     {
         roundSection++;
+        waitForPlayers.SetActive(false);
         if (roundSection == 4)
         {
             if (!allOutcomesDone)
@@ -174,6 +188,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         if (roundSection == 2)
         {
+            for (int i = 0; i < playerCount; i++)
+            {
+                round1PlayerVotes[i] = -1;
+            }
             if (!PhotonNetwork.IsMasterClient)
             {
                 return;
@@ -183,6 +201,11 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         if (roundSection == 3)
         {
+            foreach(GameObject ob in selectedButtons)
+            {
+                ob.SetActive(false);
+            }
+            waitPlayerVote.SetActive(false);
             if (PhotonNetwork.IsMasterClient)
             {
                 photonView.RPC("TriggerOutcomePlayerShown", RpcTarget.All, (int)currentPlayerShown);
@@ -205,6 +228,14 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
             else
             {
+                if (roundSection == 0)
+                {
+                    Round1Scenarios(false);
+                }
+                else if (roundSection == 1)
+                {
+                    Round1Outcomes(false);
+                }
                 timer = 0;
                 timerIsRunning = false;
                 if (PhotonNetwork.IsMasterClient)
@@ -214,6 +245,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
         }
         DisplayTime(timer);
+        if(everyoneSubmitted == playerCount && PhotonNetwork.IsMasterClient)
+        {
+            everyoneSubmitted = 0;
+            OnClickNextSection();
+        }
     }
 
     void DisplayTime(float timeToDisplay)
@@ -223,16 +259,38 @@ public class GameManager : MonoBehaviourPunCallbacks
         timerText.text = string.Format("{0:0}:{1:00}", minutes, seconds);
     }
     //===============================================================================================================================
-    public void Round1Scenarios()
+    public void Round1Scenarios(bool clicked)
     {
         string scenario = round1Scenario.text;
         photonView.RPC("SendRound1Scenarios", RpcTarget.MasterClient, scenario, playerID);
+        if (clicked)
+        {
+            clickSubmit();
+        }
     }
-    public void Round1Outcomes()
+    public void Round1Outcomes(bool clicked)
     {
         string positiveOutcome = round1PositiveOutcome.text;
         string negativeOutcome = round1NegativeOutcome.text;
         photonView.RPC("SendRound1Outcomes", RpcTarget.All, positiveOutcome, negativeOutcome, playerID);
+        if (clicked)
+        {
+            clickSubmit();
+        }
+    }
+    public void clickSubmit()
+    {
+        foreach (GameObject obj in roundOBJ[roundSection].objects)
+        {
+            obj.SetActive(false);
+        }
+        waitForPlayers.SetActive(true);
+        photonView.RPC("GetPlayerSubmit", RpcTarget.MasterClient);
+    }
+    [PunRPC]
+    void GetPlayerSubmit()
+    {
+        everyoneSubmitted++;
     }
     public void PlaceChoice(int value)
     {
@@ -305,8 +363,21 @@ public class GameManager : MonoBehaviourPunCallbacks
             player.transform.position = resetPosition.position;
         }
         int recievedValue = value;
-        round1ScenarioTextShown.text = round1Scenarios[value];
-        redonePlayerItemsList[value].transform.position = playerReviewPosition.position;
+        if(playerID-1 == recievedValue)
+        {
+            foreach (GameObject obj in roundOBJ[roundSection].objects)
+            {
+                obj.SetActive(false);
+            }
+            waitPlayerVote.SetActive(true);
+        }
+        else
+        {
+            waitPlayerVote.SetActive(false);
+            round1ScenarioTextShown.text = round1Scenarios[recievedValue];
+            redonePlayerItemsList[recievedValue].transform.position = playerReviewPosition.position;
+        }
+        
     }
 
     [PunRPC]
@@ -315,27 +386,36 @@ public class GameManager : MonoBehaviourPunCallbacks
         int recievedValue = value;
         round1PositiveOutcomeText.text = round1PositiveOutcomes[value];
         round1NegativeOutcomeText.text = round1NegativeOutcomes[value];
-        for(int i = 0; i < playerCount; i++)
+        positivePanelHighlight.SetActive(false);
+        negativePanelHighlight.SetActive(false);
+        for (int i = 0; i < playerCount; i++)
         {
-            if(round1PlayerChoices[value] == round1PlayerVotes[i])
+            if (round1PlayerChoices[recievedValue] == round1PlayerVotes[i] && recievedValue != i)
             {
                 int score = redonePlayerItemsList[i].GetComponent<PlayerItem>().playerScore;
                 score++;
                 redonePlayerItemsList[i].GetComponent<PlayerItem>().playerScore = score;
             }
-            if(round1PlayerChoices[value] == 0)
+            if(round1PlayerVotes[i] == 0)
             {
                 redonePlayerItemsList[i].transform.position = playerPositiveChoices[i].position;
-                if(i == value)
-                {
-                    redonePlayerItemsList[i].transform.position = playerPositiveChoices[8].position;
-                }
-            }else if(round1PlayerChoices[value] == 1)
+                
+            }else if(round1PlayerVotes[i] == 1)
             {
                 redonePlayerItemsList[i].transform.position = playerNegativeChoices[i].position;
-                if (i == value)
+                
+            }
+            if (i == recievedValue)
+            {
+                if(round1PlayerChoices[recievedValue] == 0)
+                {
+                    redonePlayerItemsList[i].transform.position = playerPositiveChoices[8].position;
+                    positivePanelHighlight.SetActive(true);
+                }
+                else if (round1PlayerChoices[recievedValue] == 1)
                 {
                     redonePlayerItemsList[i].transform.position = playerNegativeChoices[8].position;
+                    negativePanelHighlight.SetActive(true);
                 }
             }
         }

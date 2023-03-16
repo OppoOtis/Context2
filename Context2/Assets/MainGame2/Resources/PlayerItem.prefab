@@ -166,7 +166,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3130078948752720102}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -301,8 +301,8 @@ RectTransform:
   m_LocalScale: {x: 0.93813, y: 0.93813, z: 0.93813}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3130078947623895257}
   - {fileID: 3130078948812941107}
+  - {fileID: 3130078947623895257}
   - {fileID: 8139104614346446335}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -334,6 +334,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerName: {fileID: 3130078947623895258}
   playerAvatar: {fileID: 3130078948812941116}
+  playerScoreText: {fileID: 8710427502921377380}
+  playerScore: 0
   avatars:
   - {fileID: 2100000, guid: c3c22b3559c7a7048a8f06af9f00d3b5, type: 2}
   - {fileID: 2100000, guid: 4a48ca70194414f4f99cc822cbe36f21, type: 2}
@@ -345,7 +347,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 98a21ff7c09bf8048a135446c312dec8, type: 2}
   - {fileID: 2100000, guid: 9329d8bee08008347a3b96d7868f2b9c, type: 2}
   - {fileID: 2100000, guid: daaed323cc8b623488bf48be092e92e4, type: 2}
-  playerScoreText: {fileID: 8710427502921377380}
 --- !u!114 &4274482257159088376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,7 +408,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3130078948752720102}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
