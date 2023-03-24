@@ -8,6 +8,7 @@ public class ShuffleAnimation : MonoBehaviour
     private bool hasStarted = false;
     public AnimationClip animationClipReference;
     public GameManager gameManager;
+    public bool[] hasPlayed;
 
     private void OnEnable()
     {
@@ -28,11 +29,12 @@ public class ShuffleAnimation : MonoBehaviour
 
     public void StartShuffleAnimation()
     {
-        hasStarted = true;
         for (int i = 0; i < shuffleAnimators.Length; i++)
         {
-            shuffleAnimators[i].SetInteger("Start", i);
+            //shuffleAnimators[i].SetInteger("Start", i);
+            shuffleAnimators[i].SetTrigger("a" + i);
         }
+
     }
 
     public void GoToNextScreen()
