@@ -234,7 +234,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 if (roundSection == 0)
                 {
                     Round1Scenarios(false);
-                    /*
+                    
                     Debug.Log("test");
                     triggerShuffle = true;
                     waitForPlayers.SetActive(false);
@@ -243,6 +243,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                         obj.SetActive(false);
                     }
                     shuffleScreen.SetActive(true);
+                    /*
                     for(int i = 0; i < playerCount; i++)
                     {
                         redonePlayerItemsList[i].transform.parent = shuffleParents[i].transform;
