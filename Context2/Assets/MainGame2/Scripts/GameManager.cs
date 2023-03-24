@@ -234,6 +234,10 @@ public class GameManager : MonoBehaviourPunCallbacks
                     {
                         OnClickNextSection();
                     }
+                    else
+                    {
+                        timer = 0;
+                    }
                 }
             }
             else
