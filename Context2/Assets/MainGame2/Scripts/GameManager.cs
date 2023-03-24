@@ -236,17 +236,15 @@ public class GameManager : MonoBehaviourPunCallbacks
                     }
                     else
                     {
-                        timer = 0;
+                        photonView.RPC("DownTimer", RpcTarget.All);
                     }
                 }
             }
             else
             {
                 bool triggerShuffle = false;
-                Debug.Log("test");
                 if (roundSection == 0)
                 {
-                    Debug.Log("test1");
                     Round1Scenarios(false);
                     triggerShuffle = true;
                     waitForPlayers.SetActive(false);
@@ -261,7 +259,6 @@ public class GameManager : MonoBehaviourPunCallbacks
                         redonePlayerItemsList[i].transform.parent = shuffleParents[i].transform;
                         redonePlayerItemsList[i].transform.localPosition = new Vector3(0, 0, 0);
                     }
-                    
                 }
                 if (roundSection == 1)
                 {
@@ -329,6 +326,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             OnClickNextSection();
 
         }
+    }
+    [PunRPC]
+    void DownTimer()
+    {
+        timer = 0;
     }
     [PunRPC]
     void GetPlayerSubmit()
