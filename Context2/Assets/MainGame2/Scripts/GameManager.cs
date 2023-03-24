@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     public List<GameObject> playerItemsList;
     public List<GameObject> redonePlayerItemsList;
     public GameObject[] playerScorePositions;
+    public GameObject shuffleScreen;
+    public GameObject[] shuffleParents;
 
     public GameObject waitPlayerVote;
     public GameObject waitForPlayers;
@@ -228,9 +230,21 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
             else
             {
+                bool triggerShuffle = false;
                 if (roundSection == 0)
                 {
                     Round1Scenarios(false);
+                    triggerShuffle = true;
+                    foreach (GameObject obj in roundOBJ[0].objects)
+                    {
+                        obj.SetActive(false);
+                    }
+                    shuffleScreen.SetActive(true);
+                    for(int i = 0; i < playerCount; i++)
+                    {
+                        redonePlayerItemsList[i].transform.parent = shuffleParents[i].transform;
+                        redonePlayerItemsList[i].transform.localPosition = new Vector3(0, 0, 0);
+                    }
                 }
                 if (roundSection == 1)
                 {
@@ -238,7 +252,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 }
                 timer = 0;
                 timerIsRunning = false;
-                if (PhotonNetwork.IsMasterClient)
+                if (PhotonNetwork.IsMasterClient && triggerShuffle == false)
                 {
                     OnClickNextSection();
                 }
@@ -287,6 +301,17 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         waitForPlayers.SetActive(true);
         photonView.RPC("GetPlayerSubmit", RpcTarget.MasterClient);
+    }
+
+    public void FinishShuffle()
+    {
+        for (int i = 0; i < playerCount; i++)
+        {
+            redonePlayerItemsList[i].transform.parent = playerParent;
+            redonePlayerItemsList[i].transform.position = playerParent.position;
+        }
+        shuffleScreen.SetActive(false);
+        OnClickNextSection();
     }
     [PunRPC]
     void GetPlayerSubmit()

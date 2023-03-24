@@ -7,15 +7,16 @@ public class ShuffleAnimation : MonoBehaviour
     public Animator[] shuffleAnimators;
     private bool hasStarted = false;
     public AnimationClip animationClipReference;
+    public GameManager gameManager;
 
     private void OnEnable()
     {
+        gameManager = GameObject.FindObjectOfType<GameManager>();
         if (!hasStarted)
         {
             StartShuffleAnimation();
             StartCoroutine(goToNextAfterAnimation());
         }
-
     }
 
     private IEnumerator goToNextAfterAnimation()
@@ -36,6 +37,7 @@ public class ShuffleAnimation : MonoBehaviour
 
     public void GoToNextScreen()
     {
-        //Joppe doe iets 
+        Debug.Log("me is broken");
+        gameManager.FinishShuffle();
     }
 }

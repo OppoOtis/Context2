@@ -3926,6 +3926,16 @@ MonoBehaviour:
   - {fileID: 1685982194}
   - {fileID: 1348781794}
   - {fileID: 434408269}
+  shuffleScreen: {fileID: 1146227505}
+  shuffleParents:
+  - {fileID: 1319964058}
+  - {fileID: 748853039}
+  - {fileID: 654526293}
+  - {fileID: 126865540}
+  - {fileID: 897718804}
+  - {fileID: 733510367}
+  - {fileID: 365689311}
+  - {fileID: 475444556}
   waitPlayerVote: {fileID: 1511366597}
   waitForPlayers: {fileID: 603840315}
   selectedButtons:
@@ -5949,7 +5959,8 @@ MonoBehaviour:
   - {fileID: 1444526931}
   - {fileID: 1940510039}
   - {fileID: 997489423}
-  animationClipReference: {fileID: 0}
+  animationClipReference: {fileID: 7400000, guid: bebd574a16fcff04bbe24579562dd607, type: 2}
+  gameManager: {fileID: 0}
 --- !u!1 &1153150441
 GameObject:
   m_ObjectHideFlags: 0
