@@ -232,7 +232,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 {
                     Round1Scenarios(false);
                 }
-                else if (roundSection == 1)
+                if (roundSection == 1)
                 {
                     Round1Outcomes(false);
                 }
@@ -273,6 +273,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         string positiveOutcome = round1PositiveOutcome.text;
         string negativeOutcome = round1NegativeOutcome.text;
         photonView.RPC("SendRound1Outcomes", RpcTarget.All, positiveOutcome, negativeOutcome, playerID);
+        Debug.Log(playerID);
         if (clicked)
         {
             clickSubmit();
@@ -395,6 +396,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 int score = redonePlayerItemsList[i].GetComponent<PlayerItem>().playerScore;
                 score++;
                 redonePlayerItemsList[i].GetComponent<PlayerItem>().playerScore = score;
+                //ScoreManager.totalScore[i] = score;
             }
             if(round1PlayerVotes[i] == 0)
             {
