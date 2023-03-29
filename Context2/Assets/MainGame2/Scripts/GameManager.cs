@@ -234,9 +234,7 @@ public class GameManager : MonoBehaviourPunCallbacks
                 if (roundSection == 0)
                 {
                     Round1Scenarios(false);
-                    Debug.Log("test");
                     triggerShuffle = true;
-                    waitForPlayers.SetActive(false);
                     foreach (GameObject obj in roundOBJ[0].objects)
                     {
                         obj.SetActive(false);
