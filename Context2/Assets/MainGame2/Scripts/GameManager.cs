@@ -324,11 +324,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             redonePlayerItemsList[i].transform.position = playerParent.position;
         }
         shuffleScreen.SetActive(false);
-        if (PhotonNetwork.IsMasterClient)
-        {
-            OnClickNextSection();
-
-        }
+        OnClickNextSection();
     }
     [PunRPC]
     void GetPlayerSubmit()
