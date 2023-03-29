@@ -227,22 +227,16 @@ public class GameManager : MonoBehaviourPunCallbacks
             if (timer > 0)
             {
                 timer -= Time.deltaTime;
-                if (everyoneSubmitted == playerCount && PhotonNetwork.IsMasterClient)
-                {
-                    everyoneSubmitted = 0;
-                    if (roundSection != 0)
-                    {
-                        OnClickNextSection();
-                    }
-                }
             }
             else
             {
                 bool triggerShuffle = false;
                 if (roundSection == 0)
                 {
-                    Debug.Log("test1");
+                    Debug.Log("test");
                     Round1Scenarios(false);
+                    
+                    
                     triggerShuffle = true;
                     waitForPlayers.SetActive(false);
                     foreach (GameObject obj in roundOBJ[0].objects)
@@ -250,13 +244,13 @@ public class GameManager : MonoBehaviourPunCallbacks
                         obj.SetActive(false);
                     }
                     shuffleScreen.SetActive(true);
-                    
+                    /*
                     for(int i = 0; i < playerCount; i++)
                     {
                         redonePlayerItemsList[i].transform.parent = shuffleParents[i].transform;
                         redonePlayerItemsList[i].transform.localPosition = new Vector3(0, 0, 0);
                     }
-                    
+                    */
                 }
                 if (roundSection == 1)
                 {
@@ -271,7 +265,11 @@ public class GameManager : MonoBehaviourPunCallbacks
             }
         }
         DisplayTime(timer);
-        
+        if(everyoneSubmitted == playerCount && PhotonNetwork.IsMasterClient)
+        {
+            everyoneSubmitted = 0;
+            OnClickNextSection();
+        }
     }
 
     void DisplayTime(float timeToDisplay)
