@@ -239,7 +239,6 @@ public class GameManager : MonoBehaviourPunCallbacks
             else
             {
                 bool triggerShuffle = false;
-                Debug.Log("test");
                 if (roundSection == 0)
                 {
                     Debug.Log("test1");
