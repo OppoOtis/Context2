@@ -3038,7 +3038,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -764.5, y: -428.25}
+  m_AnchoredPosition: {x: -860.369, y: -381.48462}
   m_SizeDelta: {x: 160, y: 81.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &554763117
@@ -3935,7 +3935,7 @@ MonoBehaviour:
   round1PlayerChoicesSlider: {fileID: 0}
   round1PlayerVoteSlider: {fileID: 0}
   nextSectionButton: {fileID: 554763115}
-  roundTimers: 78000000780000001e0000000c0000000a000000
+  roundTimers: 2c0100007800000078000000780000000a000000
   timer: 0
   timerIsRunning: 0
   timerText: {fileID: 276824419}

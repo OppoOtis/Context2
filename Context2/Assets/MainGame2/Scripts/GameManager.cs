@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             round1PlayerVotes[i] = -1;
         }
         timerIsRunning = true;
-        timer = 120;
+        timer = 300;
     }
     private void Start()
     {
